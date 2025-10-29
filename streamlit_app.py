@@ -1,42 +1,56 @@
 import streamlit as st
 import pickle
 import numpy as np
+import pandas as pd
 
 # -------------------------------
-# 1. Load your trained model
+# 1. Load Models and Feature Data
 # -------------------------------
-# Example: model.pkl should be in the same folder
-with open("model.pkl", "rb") as file:
-    model = pickle.load(file)
+with open("beans_loan_model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+with open("beans_features.pkl", "rb") as f:
+    feature_info = pickle.load(f)
+
+with open("beans_scaler.pkl", "rb") as f:
+    feature_info = pickle.load(f)
 
 # -------------------------------
-# 2. Streamlit App Layout
-# -------------------------------
-st.title("🤖 AI Model Prediction App")
-st.write("This simple app loads a trained model and makes predictions.")
+# 2. App Layout
+# -------------------------------b
+st.title("🧠 Beans Loan Prediction App")
+st.write("This app predicts loan approval using your trained AI model.")
+
+# Display model information
+st.sidebar.header("Model Info")
+st.sidebar.write("Model file: beans_loan_model.pkl")
+st.sidebar.write(f"Feature set: {len(feature_info)} features")
 
 # -------------------------------
 # 3. User Input Section
 # -------------------------------
-st.header("Enter Input Features")
+st.header("Enter Applicant Data")
 
-# Example for a model with 3 numerical inputs
-feature1 = st.number_input("Feature 1", value=0.0)
-feature2 = st.number_input("Feature 2", value=0.0)
-feature3 = st.number_input("Feature 3", value=0.0)
+# Create dynamic input fields for each feature
+user_inputs = {}
+for feature in feature_info:
+    user_inputs[feature] = st.number_input(f"{feature}", value=0.0)
 
-# Convert inputs to NumPy array for model prediction
-input_data = np.array([[feature1, feature2, feature3]])
-
-# -------------------------------
-# 4. Make Predictions
-# -------------------------------
-if st.button("Predict"):
-    prediction = model.predict(input_data)
-    st.success(f"✅ Model Prediction: {prediction[0]}")
+# Convert input to DataFrame
+input_df = pd.DataFrame([user_inputs])
 
 # -------------------------------
-# 5. Optional Footer
+# 4. Make Prediction
 # -------------------------------
+if st.button("Predict Loan Approval"):
+    prediction = model.predict(input_df)[0]
+    st.success(f"✅ Prediction Result: {prediction}")
+
+# -------------------------------
+# 5. Optional: Display Inputs
+# -------------------------------
+st.subheader("Input Summary")
+st.dataframe(input_df)
+
 st.write("---")
-st.caption("Built with ❤️ using Streamlit")
+st.caption("App built with ❤️ using Streamlit")
