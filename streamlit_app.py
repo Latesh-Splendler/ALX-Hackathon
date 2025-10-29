@@ -1028,4 +1028,4 @@ elif page == "ℹ️ About":
 # ============================================================================
 
 st.divider()
-st.caption("© 2025 Agricultural Finance ML System | Powered by Machine Learning 
+st.caption("© 2025 Agricultural Finance ML System | Powered by Machine Learning")
